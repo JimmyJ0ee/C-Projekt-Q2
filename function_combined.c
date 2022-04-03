@@ -1,37 +1,7 @@
 #include <stdio.h>
 #include <stdint.h> //für bsp. int8_t
 #include <stdlib.h> //malloc
-
-int einlesen(){
-    const uint8_t total_users = 100;
-    const uint8_t name_len = 58; //29 Zeichen a 2 chars 
-
-    const char* file_name = "anonym.txt"; //array von chars ist der Typ von file_name //die chars sind die Zeichen aus denen sich der string zusammensetzt
-    char inhalt[total_users][name_len]; //zuerst Zeile dann Spalte, wegen Dimensionen (zweidimensionales Array)
-
-    for(uint8_t x = 0; x < total_users; ++x) //x wird gleich 0 gesetzt und solange x kleiner als 100 ist, solange steigt der Wert von x
-    {
-        for(uint8_t y = 0; y < name_len; ++y) //y wird gleich 0 gesetzt und solange y kleiner als 100 ist, solange steigt der Wert von y
-        {
-            inhalt[x][y] = 0; //hier wird klargestellt, dass es sich bei x um die erste Dimension im zweidimensionalen array inhalt handelt und bei y um die zweite Dimension
-        }
-    }
-    uint8_t user_count = 0; //hier wird user_count gleich 0 gesetzt und da ich nichts negatives möchte, als uint
-
-    FILE* file = fopen(file_name, "r");
-    if(file != NULL) //wenn der Pointer nicht leer ist
-    {
-        while (!feof(file)) //solange das Ende der Datei nicht erreicht ist
-        {
-            fgets(inhalt[user_count], name_len, file); //um das zu verstehen, die Funktion fgets googlen (zukünftig für alle Funktionen so machen)
-            printf("%s", inhalt[user_count]); // %s sagt der Funktion printf, dass ein string geprinted werden soll MERKE: geht auch mit %c für char, etc.
-            ++user_count;
-        }
-        fclose(file);
-    }
-    user_count--;
-    return user_count;
-}
+#include <time.h>   //srand
 
 uint8_t varianten (int8_t anz_user, int8_t gruppengroese, uint8_t *speicher){
     struct rueckgabe{
@@ -152,6 +122,23 @@ void gruppenvorschlag(int8_t anz_user, uint8_t *speicher){
     }
 }
 
+//Funktion tauscht Positionen durch   
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+//Funnktion mischt Zahlenarray-Positionen abhängig von Zufallsfaktor Zeit
+void randomize(int arr[], int n) {
+    srand(time(NULL));
+    int i;
+    for(i = n-1; i > 0; i--) {
+        int j = rand() % (i+1);
+        swap(&arr[i], &arr[j]);
+    }
+}
+
 void ausgabe(){
     //char*[][]=gruppeneinteilung caro
     char gruppe_1 [4][8] = {"nico", "steven", "caro", "chris"};
@@ -179,8 +166,33 @@ void ausgabe(){
 
 int main(){
     //ab hier Steven
-    uint8_t user_count = 0;
-    user_count=einlesen();
+    const uint8_t total_users = 100;
+    const uint8_t name_len = 58; //29 Zeichen a 2 chars 
+
+    const char* file_name = "anonym.txt"; //array von chars ist der Typ von file_name //die chars sind die Zeichen aus denen sich der string zusammensetzt
+    char inhalt[total_users][name_len]; //zuerst Zeile dann Spalte, wegen Dimensionen (zweidimensionales Array)
+
+    for(uint8_t x = 0; x < total_users; ++x) //x wird gleich 0 gesetzt und solange x kleiner als 100 ist, solange steigt der Wert von x
+    {
+        for(uint8_t y = 0; y < name_len; ++y) //y wird gleich 0 gesetzt und solange y kleiner als 100 ist, solange steigt der Wert von y
+        {
+            inhalt[x][y] = 0; //hier wird klargestellt, dass es sich bei x um die erste Dimension im zweidimensionalen array inhalt handelt und bei y um die zweite Dimension
+        }
+    }
+    uint8_t user_count = 0; //hier wird user_count gleich 0 gesetzt und da ich nichts negatives möchte, als uint
+
+    FILE* file = fopen(file_name, "r");
+    if(file != NULL) //wenn der Pointer nicht leer ist
+    {
+        while (!feof(file)) //solange das Ende der Datei nicht erreicht ist
+        {
+            fgets(inhalt[user_count], name_len, file); //um das zu verstehen, die Funktion fgets googlen (zukünftig für alle Funktionen so machen)
+            printf("%s", inhalt[user_count]); // %s sagt der Funktion printf, dass ein string geprinted werden soll MERKE: geht auch mit %c für char, etc.
+            ++user_count;
+        }
+        fclose(file);
+    }
+    user_count--;
     //ab hier christian
     uint8_t *speicher;
     speicher = malloc(sizeof(uint8_t)*4);   //reserviert speicher für 4 int auf heat
@@ -191,6 +203,57 @@ int main(){
     gruppenvorschlag(user_count, (uint8_t *)speicher);
     printf("\n---------------------------------------------------------------------");
     printf("\nIhre Wahl: %d Gruppen mit %d Mitgliedern plus %d Gruppen zu je %d Mitgliedern\n", speicher[0], speicher[1], speicher[2], speicher[3]);
+    //ab hier caro
+    //Variablen übernehmen vom vorherigen Schritt/Christian:
+    int group_even_number = speicher[0];
+    int group_even_members = speicher[1];
+    const int members_smart = group_even_members;
+    int group_odd_number = speicher[2];
+    int group_odd_members = speicher[3];
+    const int group_number_total = group_even_number + group_odd_number;
+    int group_members_total;
+
+    //group übernehmen vom ersten Schritt/Steven:
+    int arr[user_count];
+    int count;
+    for (count=0; count <= (user_count-1); count++){
+        arr[count] = count;
+    }
+
+    int n = sizeof(arr)/ sizeof(arr[0]);
+    char* group_random[user_count];
+    char* allocated_group[group_number_total][members_smart];
+    
+    int i;
+    randomize (arr, n);
+    for(i = 0; i < n; i++) {
+        int index = arr[i];
+        group_random[i] = inhalt[index];
+    }
+
+    int e, f, g, h;
+    int group_random_count=0;
+    for (e=0; e <= (group_even_number-1); e++){
+        for (f = 0; f <= (group_even_members-1); f++){
+            allocated_group[e][f] = group_random[group_random_count];
+            group_random_count++;
+        }
+    }
+    group_odd_number=group_odd_number+e;
+    for (g=e; g <= group_odd_number; g++){
+        for (h=0; h <= (group_odd_members-1); h++){
+            allocated_group[g][h] = group_random[group_random_count];
+            group_random_count++;
+        }
+    }
+    printf("\nab hier allocated group\n");
+    int m, o;
+    for(m = 0; m <= (group_number_total-1); m++) {
+        for(o =0; o <= (members_smart-1); o++){
+            printf("%s\n", allocated_group[m][o]);
+        }
+        printf("naechste gruppe\n");
+    }
     //ab hier nico
     ausgabe();
     free (speicher);

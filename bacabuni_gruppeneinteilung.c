@@ -2,6 +2,7 @@
 #include <stdint.h> //für bsp. int8_t
 #include <stdlib.h> //malloc
 #include <time.h>   //srand
+//funktionsweise: anonym.txt in selben ordner legen, wie diese datei
 
 uint8_t varianten (int8_t anz_user, int8_t gruppengroese, uint8_t *speicher)
 {

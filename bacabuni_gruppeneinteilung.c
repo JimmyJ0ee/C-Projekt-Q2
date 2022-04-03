@@ -140,21 +140,21 @@ void gruppenvorschlag(int8_t anz_user, uint8_t *speicher)
 }
 
 //Funktion tauscht Positionen durch   
-void swap(int *a, int *b)
+void swap(int8_t *a, int8_t *b)
 {
-    int temp = *a;
+    int8_t temp = *a;
     *a = *b;
     *b = temp;
 }
 
 //Funnktion mischt Zahlenarray-Positionen abhängig von Zufallsfaktor Zeit
-void randomize(int arr[], int n)
+void randomize(int8_t arr[], int8_t n)
 {
     srand(time(NULL));
-    int i;
+    int8_t i;
     for(i = n-1; i > 0; i--)
     {
-        int j = rand() % (i+1);
+        int8_t j = rand() % (i+1);
         swap(&arr[i], &arr[j]);
     }
 }
@@ -205,36 +205,36 @@ int main()
     
     //ab hier caro
     //Variablen übernehmen vom vorherigen Schritt/Christian:
-    int group_even_number = speicher[0];
-    int group_even_members = speicher[1];
-    const int members_smart = group_even_members;
-    int group_odd_number = speicher[2];
-    int group_odd_members = speicher[3];
-    const int group_number_total = group_even_number + group_odd_number;
-    int group_members_total;
+    int8_t group_even_number = speicher[0];
+    int8_t group_even_members = speicher[1];
+    const int8_t members_smart = group_even_members;
+    int8_t group_odd_number = speicher[2];
+    int8_t group_odd_members = speicher[3];
+    const int8_t group_number_total = group_even_number + group_odd_number;
+    int8_t group_members_total;
 
     //group übernehmen vom ersten Schritt/Steven:
-    int arr[user_count];
-    int count;
+    int8_t arr[user_count];
+    int8_t count;
     for (count=0; count <= (user_count-1); count++)
     {
         arr[count] = count;
     }
 
-    int n = sizeof(arr)/ sizeof(arr[0]);
+    int8_t n = sizeof(arr)/ sizeof(arr[0]);
     char* group_random[user_count];
     char* allocated_group[group_number_total][members_smart];
     
-    int i;
+    int8_t i;
     randomize (arr, n);
     for(i = 0; i < n; i++)
     {
-        int index = arr[i];
+        int8_t index = arr[i];
         group_random[i] = inhalt[index];
     }
 
-    int e, f, g, h;
-    int group_random_count=0;
+    int8_t e, f, g, h;
+    int8_t group_random_count=0;
     for (e=0; e <= (group_even_number-1); e++)
     {
         for (f = 0; f <= (group_even_members-1); f++)
@@ -255,25 +255,25 @@ int main()
 
 
     //ab hier nico
-    int anz_gr_1=speicher[0];
-    int mitgl_1=speicher[1];
-    int anz_gr_2=speicher[2];
-    int mitgl_2=speicher[3];
-    int a;
+    int8_t anz_gr_1=speicher[0];
+    int8_t mitgl_1=speicher[1];
+    int8_t anz_gr_2=speicher[2];
+    int8_t mitgl_2=speicher[3];
+    int8_t a;
     for (a = 0; a < anz_gr_1; ++a)
     { 
         printf("\nGruppe %d:\n", a+1);
     
-        for (int m = 0; m < mitgl_1; ++m)
+        for (int8_t m = 0; m < mitgl_1; ++m)
         {
             printf("\t%s", allocated_group[a][m]);
         }
     }
-    for (int j = 0; j < anz_gr_2; ++j)
+    for (int8_t j = 0; j < anz_gr_2; ++j)
     {
         printf("\nGruppe %d:\n", j+a+1);
     
-        for (int n = 0; n < mitgl_2; ++n)
+        for (int8_t n = 0; n < mitgl_2; ++n)
         {
             printf("\t%s", allocated_group[j][n]);
         }

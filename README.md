@@ -1,7 +1,6 @@
-# C-Projekt-Q2-Aufgabe-1
+# C-Projekt-Q2-Aufgabe-2
 
-Deadline: 03.04.
+Deadline: 24.04. 23:59
 
-Offene Tasks: - Randomizer
-              - Zusammenführen der einzelnen Programmschnipsel 
+
               

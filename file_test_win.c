@@ -49,6 +49,31 @@ int main() {
                 switch (event->Action) {
                 case FILE_ACTION_ADDED: {
                     wprintf(L"      Datei hinzugefuegt: %.*s\n", name_len, event->FileName);
+                    //dateiname kommt von nico/caro
+                    const char* dateiname = "1345.txt";
+                    char inhalt[50][50];
+                    int count=0;
+                    FILE* datei = fopen(dateiname, "r");
+                    if (datei != NULL)
+                    {
+                        while (!feof(datei))
+                        {
+                            fscanf(datei, "%s", inhalt[count]);
+                            count++;
+                        }
+                    }
+                    else
+                    {
+                        printf("datei war leer");
+                    }
+                    fclose(datei);
+                    printf("%d\n", count);
+                    int a=0;
+                    while (a<count)
+                    {
+                        printf("%s\t", inhalt[a]);
+                        a++;
+                    }
                 }
                 break;
 

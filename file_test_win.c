@@ -9,11 +9,6 @@ void add_file_to_pos_case_list(){
     fprintf(pos_cases,"%s\n","mus_test.txt");
 
 }
-void write_result_in_file(){
-    FILE* test_write_result;
-    test_write_result = fopen("test_write_result.txt","w");
-    fprintf(test_write_result,"%s\n","mus_test.txt");
-}
 int main() {
     char *path = "C:\\Users\\auchterc\\C\\abgabe_2"; // Pfad zum ueberwachten Verzeichnis.
 

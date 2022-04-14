@@ -1,0 +1,3 @@
+max.mustermann@mustermann.de 	#emailadresse
+13:45							#Wunschuhrzeit, im 15 min Takt
+[positiv/negativ/abgelehnt]		#Ergebnis. Optional, da vom System ausgefüllt

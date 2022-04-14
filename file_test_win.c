@@ -7,7 +7,7 @@ void add_file_to_pos_case_list(){
     FILE* pos_cases;
     pos_cases = fopen("pos_case.txt","w");
     fprintf(pos_cases,"%s\n","mus_test.txt");
-
+    
 }
 void write_result_in_file(){
     FILE* test_write_result;
@@ -67,9 +67,6 @@ int main() {
                 }
                 break;
 
-                case FILE_ACTION_MODIFIED: {
-                    wprintf(L"      Datei veraendert: %.*s\n", name_len, event->FileName);
-                }
                 break;
 
                 case FILE_ACTION_RENAMED_OLD_NAME: {

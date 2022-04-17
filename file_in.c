@@ -40,7 +40,7 @@ void main()
     int minute_int = atoi(minute);
     const char* namedatei = "1345.txt";
     char meldung[11]="\nabgelehnt";
-    if((8<=hour_int) && (hour_int<=18) && (minute_int % 15 ==0))
+    if((8<=hour_int) && (hour_int<=18) && (0<=minute_int) && (minute_int<=45) && (minute_int % 15 ==0))
     {
         printf("\nDatei valide!\n");
         char* name = inhalt[0];

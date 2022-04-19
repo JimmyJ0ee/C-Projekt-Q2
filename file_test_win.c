@@ -1,14 +1,69 @@
 // To-Do
 //      - pos_case datei muss 1x am Tag gecleared werden! oder einen neue Liste erstellt werden! -> done
 //      - alle Dateien müssen durchiteriert werden (brauche: Verzeichnisinhalt + Dateinamen + Anzahl von Dateien in dem Verzeichnis)
-//      - ctrl + c, um Datei zu beenden
+//      - ctrl + c, um Datei zu beenden -> done
 #include <windows.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
+#include <signal.h>
+#include <unistd.h>
 
+//ctrl+c abfangen Funktion + Dateien Einlesen & Auswerten
+void sig_handler(int signo)
+{
+    if (signo == SIGINT)
+        printf("received SIGINT\n");
+        //char* dateinamen[dateianzahl]=Einlesen der Dateinamen in eine Liste
+
+        //ab hier excersice_c copy+paste
+        struct _finddata_t c_file;
+        long hFile;
+        int counter = 0;
+
+        // Find first file in current directory 
+        if( (hFile = _findfirst( "*.*", &c_file )) == -1L ){
+            printf( "No files in current directory!\n" );
+        }
+        else{
+            ++counter;
+            printf( "Listing of all files\n\n" );
+            printf( " %-12s \n", c_file.name );
+
+            //Hier aktuelles Problem Dateinamen zur Liste hinzufügen
+            char** list_filenames;
+            //list_filenames[0]= &c_file.name;
+            //printf("%s\n", list_filenames);
+            // Find the rest of the .c files
+            while( _findnext( hFile, &c_file ) == 0 )
+            {
+                ++counter;
+                printf( " %-12s \n", c_file.name );
+                //list_filenames = ; //files der liste hinzufügen
+            }
+
+        _findclose( hFile );
+        }
+        //Input: liste "filenames"
+        //Rauslöschen der Dateien, die keine Testanfragen sind + nicht valide Dateien
+        //Output: liste filenames mit validen Testanfragen, die dann ausgewertet werden können
+        
+
+        printf( "Number of files: %d\n", counter );
+        uint8_t dateianzahl=counter;
+
+        // Hier soll dann durchiteriert werden und der Dateiname immer neu gesetzt werden
+            /*for(uint8_t test_anfragen_anzahl = dateianzahl-5; test_anfragen_anzahl >=0; test_anfragen_anzahl--){
+                char* dateiname = "%s",dateinamen[test_anfragen_anzahl];
+                after_exit(dateiname);
+            break;*/
+        
+    // beendet das Programm
+    exit(0);
+    printf("shouldn't be displayed!");
+}
 // Liste mit den positiven Fällen wird erstellt -> Gesundheitsamt
 void add_file_to_pos_case_list(char* dateiname){
     FILE* testdatei;
@@ -23,10 +78,11 @@ void add_file_to_pos_case_list(char* dateiname){
    fprintf(pos_cases,"\n");
    fclose(testdatei);
    fclose(pos_cases);
-}
+} 
 void pos_case_reset(){
     fopen("pos_case.txt","w");
 }
+
 // Ergebnis des Tests wird in die Testanfrage geschrieben!
 void write_result_in_file(char* result, char* dateiname){
     FILE* test_write_result;
@@ -80,11 +136,10 @@ int main() {
                        NULL, &overlapped, NULL);
 
     // es geht los
-    printf("warten %s auf Änderungen...\n", path);
+    printf("warten %s auf Aenderungen...\n", path);
 
     while (true) {
         DWORD result = WaitForSingleObject(overlapped.hEvent, 0);
-        char probe = getchar();             // stört Funktion des Programms
         if (result == WAIT_OBJECT_0) {
             DWORD bytes_transferred;
             GetOverlappedResult(file, &overlapped, &bytes_transferred, FALSE);
@@ -94,22 +149,22 @@ int main() {
 
                 switch (event->Action) {
                 case FILE_ACTION_ADDED: {
-                    wprintf(L"       Hinzugefügt: %.*s\n", name_len, event->FileName);
+                    wprintf(L"       Hinzugefuegt: %.*s\n", name_len, event->FileName);
                 }
                 break;
 
                 case FILE_ACTION_REMOVED: {
-                    wprintf(L"     Gelöscht: %.*s\n", name_len, event->FileName);
+                    wprintf(L"     Geloescht: %.*s\n", name_len, event->FileName);
                 }
                 break;
 
                 case FILE_ACTION_MODIFIED: {
-                    wprintf(L"    Verändert: %.*s\n", name_len, event->FileName);
+                    wprintf(L"    Veraendert: %.*s\n", name_len, event->FileName);
                 }
                 break;
 
                 case FILE_ACTION_RENAMED_OLD_NAME: {
-                    wprintf(L"Name geändert von: %.*s\n", name_len, event->FileName);
+                    wprintf(L"Name geaendert von: %.*s\n", name_len, event->FileName);
                 }
                 break;
 
@@ -141,17 +196,10 @@ int main() {
                                NULL, &overlapped, NULL);
 
         }
-        //ctrl + c workaround, um Programm zu beenden
-        if(probe == 'r')
-        {
-            //printf("%s", DWORD);
-            char* dateiname = "mus_test.txt";
-            printf("\nklappt!");
-            after_exit(dateiname);
-            break;  
-        }
         
-        // Do other loop stuff here...
+        //Abfangen von ctrl + c
+        if (signal(SIGINT, sig_handler) == SIG_ERR)
+        printf("\ncan't catch SIGINT\n");
     }
 
 }

@@ -1,7 +1,3 @@
-// To-Do
-//      - pos_case datei muss 1x am Tag gecleared werden! oder einen neue Liste erstellt werden! -> done
-//      - alle Dateien müssen durchiteriert werden (brauche: Verzeichnisinhalt + Dateinamen + Anzahl von Dateien in dem Verzeichnis)
-//      - ctrl + c, um Datei zu beenden -> done
 #include <windows.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -11,58 +7,33 @@
 #include <signal.h>
 #include <unistd.h>
 
+//Prototypen
+void after_exit(char* dateiname);
+
 //ctrl+c abfangen Funktion + Dateien Einlesen & Auswerten
 void sig_handler(int signo)
 {
-    if (signo == SIGINT)
-        printf("received SIGINT\n");
-        //char* dateinamen[dateianzahl]=Einlesen der Dateinamen in eine Liste
-
-        //ab hier excersice_c copy+paste
+    if (signo == SIGINT){
         struct _finddata_t c_file;
         long hFile;
-        int counter = 0;
-
         // Find first file in current directory 
         if( (hFile = _findfirst( "*.*", &c_file )) == -1L ){
-            printf( "No files in current directory!\n" );
+            printf("Keine Dateien im aktuellen Verzeichnis!\n");
         }
+        // Find the rest of the .c files
         else{
-            ++counter;
-            printf( "Listing of all files\n\n" );
-            printf( " %-12s \n", c_file.name );
-
-            //Hier aktuelles Problem Dateinamen zur Liste hinzufügen
-            char** list_filenames;
-            //list_filenames[0]= &c_file.name;
-            //printf("%s\n", list_filenames);
-            // Find the rest of the .c files
-            while( _findnext( hFile, &c_file ) == 0 )
-            {
-                ++counter;
-                printf( " %-12s \n", c_file.name );
-                //list_filenames = ; //files der liste hinzufügen
+            printf("Auswerten der Testanfragen folgt...\n");
+            do{
+            if(c_file.name[0]!='.' && c_file.name[0]!='a'){
+                printf("Diese Datei wurde veraendert: %s\n", c_file.name);
+                after_exit(c_file.name);
             }
-
+            }while( _findnext( hFile, &c_file ) == 0 );
         _findclose( hFile );
-        }
-        //Input: liste "filenames"
-        //Rauslöschen der Dateien, die keine Testanfragen sind + nicht valide Dateien
-        //Output: liste filenames mit validen Testanfragen, die dann ausgewertet werden können
-        
-
-        printf( "Number of files: %d\n", counter );
-        uint8_t dateianzahl=counter;
-
-        // Hier soll dann durchiteriert werden und der Dateiname immer neu gesetzt werden
-            /*for(uint8_t test_anfragen_anzahl = dateianzahl-5; test_anfragen_anzahl >=0; test_anfragen_anzahl--){
-                char* dateiname = "%s",dateinamen[test_anfragen_anzahl];
-                after_exit(dateiname);
-            break;*/
-        
-    // beendet das Programm
+        }        
     exit(0);
     printf("shouldn't be displayed!");
+    }
 }
 // Liste mit den positiven Fällen wird erstellt -> Gesundheitsamt
 void add_file_to_pos_case_list(char* dateiname){
@@ -70,7 +41,7 @@ void add_file_to_pos_case_list(char* dateiname){
     FILE* pos_cases;
     char inhalt[80];
     testdatei = fopen(dateiname,"r");
-    pos_cases = fopen("pos_case.txt","a"); 
+    pos_cases = fopen(".pos_case.txt","a"); 
     for(uint8_t i=0;i<3;i++){
         fscanf(testdatei, "%s",inhalt);
         fprintf(pos_cases,"%s\t", inhalt);
@@ -78,11 +49,7 @@ void add_file_to_pos_case_list(char* dateiname){
    fprintf(pos_cases,"\n");
    fclose(testdatei);
    fclose(pos_cases);
-} 
-void pos_case_reset(){
-    fopen("pos_case.txt","w");
 }
-
 // Ergebnis des Tests wird in die Testanfrage geschrieben!
 void write_result_in_file(char* result, char* dateiname){
     FILE* test_write_result;
@@ -93,23 +60,22 @@ void write_result_in_file(char* result, char* dateiname){
 // Auswerten einer Datei nach Eingabe von "r"
 void after_exit(char* dateiname){
     srand(time(NULL));
-    //uint8_t a= rand()%2;
-    int a=0;
+    uint8_t a = rand()%2;
+    printf("\n%d\n",a);
     char* result;
-    if (a==0){  //positiver Test
+    if (a==0){
         result="positiv";
         write_result_in_file(result, dateiname);
         add_file_to_pos_case_list(dateiname);
     }
-    else{       //negativer Test
+    else{
         result="negativ";
         write_result_in_file(result, dateiname);
     }
 }
-
 int main() {
-    char *path = "C:/Users/Z0127829/OneDrive - ZF Friedrichshafen AG/Desktop/DHBW/Programmieren/C und C++/Abgabe_2"; // Pfad zum ueberwachten Verzeichnis.
-    pos_case_reset();
+    char *path = "."; // Pfad zum ueberwachten Verzeichnis.
+    fopen(".pos_case.txt","w");
     // Handle fuer das Verzeichnis
     HANDLE file = CreateFile(path,
                              FILE_LIST_DIRECTORY,
@@ -136,8 +102,7 @@ int main() {
                        NULL, &overlapped, NULL);
 
     // es geht los
-    printf("warten %s auf Aenderungen...\n", path);
-
+    printf("warten im akutellen Verzeichnis auf Aenderungen...\n");
     while (true) {
         DWORD result = WaitForSingleObject(overlapped.hEvent, 0);
         if (result == WAIT_OBJECT_0) {
@@ -196,10 +161,9 @@ int main() {
                                NULL, &overlapped, NULL);
 
         }
-        
         //Abfangen von ctrl + c
         if (signal(SIGINT, sig_handler) == SIG_ERR)
-        printf("\ncan't catch SIGINT\n");
+        printf("\ncan't catch SIGINT\n"); 
     }
 
 }
